@@ -39,7 +39,6 @@ jobs:
       - name: Upload publish file to artifact for other job
         uses: actions/upload-artifact@v2
         with:
-          path: publish.txt
           name: publish.txt
   publish:
     name: Publish
@@ -53,7 +52,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: publish.txt
-          path: publish.txt
       - name: Publish check
         run: |
           PUBLISH=$(cat publish.txt)
