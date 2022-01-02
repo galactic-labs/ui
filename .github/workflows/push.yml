@@ -32,15 +32,15 @@ jobs:
           ORDERED=$(semver ${{ steps.current-npm-version.outputs.version }} ${{ steps.current-json-version.outputs.version }})
           HIGHEST=${ORDERED##*"\n"}
           if [ "$HIGHEST" = "${{ steps.current-npm-version.outputs.version }}" ]; then
-            echo "0" >> publish
+            echo "0" >> publish.txt
           else
-            echo "1" >> publish
+            echo "1" >> publish.txt
           fi
       - name: Upload publish file to artifact for other job
         uses: actions/upload-artifact@v2
         with:
-          path: publish
-          name: publish
+          path: publish.txt
+          name: publish.txt
   publish:
     name: Publish
     runs-on: ubuntu-latest
@@ -52,11 +52,11 @@ jobs:
       - name: Download publish file
         uses: actions/download-artifact@v2
         with:
-          name: publish
-          path: publish
+          name: publish.txt
+          path: publish.txt
       - name: Publish check
         run: |
-          PUBLISH=$(cat publish)
+          PUBLISH=$(cat publish.txt)
           if [ "$PUBLISH" = "0" ]; then
             exit 0
           fi
