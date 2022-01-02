@@ -32,7 +32,40 @@ jobs:
           ORDERED=$(semver ${{ steps.current-npm-version.outputs.version }} ${{ steps.current-json-version.outputs.version }})
           HIGHEST=${ORDERED##*"\n"}
           if [ "$HIGHEST" = "${{ steps.current-npm-version.outputs.version }}" ]; then
-            exit 0
+            echo "0" >> publish
           else
-            exit 1
-          fi 
+            echo "1" >> publish
+          fi
+      - name: Upload publish file to artifact for other job
+        uses: actions/upload-artifact@v2
+        with:
+          path: publish
+          name: publish
+  publish:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Download version file
+        uses: actions/download-artifact@v2
+        with:
+          name: version
+      - name: Publish check
+        run: |
+          PUBLISH=$(cat version)
+          if [ "$PUBLISH" = "0" ]; then
+            exit 0
+          fi
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 6.24
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+      - name: Package @galacticlabs/ui
+        run: pnpm install && pnpm package
+      - name: Publish to npm
+        run: cd package && npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
