@@ -55,23 +55,30 @@ jobs:
           path: ~/file
           name: publish.txt
       - name: Publish check
+        id: publish-check
         run: |
           PUBLISH=$(cat ~/file/publish.txt)
           if [ "$PUBLISH" = "0" ]; then
-            exit 0
+            echo "::set-output name=publish::true"
+          else
+            echo "::set-output name=publish::false"
           fi
       - uses: pnpm/action-setup@v2
+        if: ${{ steps.publish-check.outputs.publish == 'true' }}
         with:
           version: 6.24
       - name: Setup Node.js
         uses: actions/setup-node@v2
+        if: ${{ steps.publish-check.outputs.publish == 'true' }}
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
       - name: Package @galacticlabs/ui
         run: pnpm install && pnpm package
+        if: ${{ steps.publish-check.outputs.publish == 'true' }}
       - name: Publish to npm
         run: cd package && npm publish
+        if: ${{ steps.publish-check.outputs.publish == 'true' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
