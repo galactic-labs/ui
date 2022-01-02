@@ -39,6 +39,7 @@ jobs:
       - name: Upload publish file to artifact for other job
         uses: actions/upload-artifact@v2
         with:
+          path: ./
           name: publish.txt
   publish:
     name: Publish
