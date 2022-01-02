@@ -31,7 +31,7 @@ jobs:
         run: |
           ORDERED=$(semver ${{ steps.current-npm-version.outputs.version }} ${{ steps.current-json-version.outputs.version }})
           HIGHEST=${ORDERED##*"\n"}
-          if [ "$HIGHEST" = "${{ steps.current-npm-version.outputs.version }} ]; then
+          if [ "$HIGHEST" = "${{ steps.current-npm-version.outputs.version }}" ]; then
             exit 0
           else
             exit 1
