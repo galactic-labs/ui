@@ -20,7 +20,7 @@ jobs:
         run: |
           OUTPUT=$(npm search @galacticlabs/ui --color=false --parseable)
           echo $OUTPUT
-          VERSION=$(OUTPUT##* )
+          VERSION=${OUTPUT##* }
           echo "::set-output name=version::${VERSION}"
       - name: Parse version in package.json
         id: current-json-version
