@@ -39,7 +39,7 @@ jobs:
       - name: Upload publish file to artifact for other job
         uses: actions/upload-artifact@v2
         with:
-          path: file
+          path: publish.txt
           name: publish.txt
   publish:
     name: Publish
@@ -52,11 +52,11 @@ jobs:
       - name: Download publish file
         uses: actions/download-artifact@v2
         with:
-          path: file
+          path: ~/file
           name: publish.txt
       - name: Publish check
         run: |
-          PUBLISH=$(cat file/publish.txt)
+          PUBLISH=$(cat ~/file/publish.txt)
           if [ "$PUBLISH" = "0" ]; then
             exit 0
           fi
