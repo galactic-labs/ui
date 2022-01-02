@@ -30,7 +30,7 @@ jobs:
       - name: Check for version equality, else publish
         run: |
           ORDERED=$(semver ${{ steps.current-npm-version.outputs.version }} ${{ steps.current-json-version.outputs.version }})
-          HIGHEST=$(ORDERED##*"\n")
+          HIGHEST=${ORDERED##*"\n"}
           if [ "$HIGHEST" = "${{ steps.current-npm-version.outputs.version }} ]; then
             exit 0
           else
