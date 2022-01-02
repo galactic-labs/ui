@@ -1,0 +1,38 @@
+name: Possibly publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  possibly-publish:
+    name: Possibly Publish @galacticlabs/ui to NPM
+    runs-on: ubuntu-latest 
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install JQ and SemVer CLI
+        run: sudo apt-get install jq && npm i -g semver
+      - name: Get latest version of package on NPM
+        id: current-npm-version
+        run: |
+          OUTPUT=$(npm search @galacticlabs/ui --color=false --parseable)
+          echo $OUTPUT
+          VERSION=$(OUTPUT##* )
+          echo "::set-output name=version::${VERSION}"
+      - name: Parse version in package.json
+        id: current-json-version
+        run: |
+          JSON_VERSION=$(cat package.json | jq -r .version)
+          echo "::set-output name=version::${JSON_VERSION}"
+      - name: Check for version equality, else publish
+        run: |
+          ORDERED=$(semver ${{ steps.current-npm-version.outputs.version }} ${{ steps.current-json-version.outputs.version }})
+          HIGHEST=$(ORDERED##*"\n")
+          if [ "$HIGHEST" = "${{ steps.current-npm-version.outputs.version }} ]; then
+            exit 0
+          else
+            exit 1
+          fi 
