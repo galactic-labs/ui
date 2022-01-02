@@ -49,10 +49,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Download version file
+      - name: Download publish file
         uses: actions/download-artifact@v2
         with:
-          name: version
+          name: publish
       - name: Publish check
         run: |
           PUBLISH=$(cat version)
