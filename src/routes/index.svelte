@@ -1,11 +1,5 @@
 <script lang="ts">
-    import { Drawer } from "$lib";
-
-    let open = false;
+    import { ComboBox, Drawer } from "$lib";
 </script>
 
-<button type="checkbox" on:click={() => open = !open}>Toggle</button>
-
-<Drawer bind:open>
-    text
-</Drawer>
+<ComboBox options={["option 1", "option 2", "option 3"]}/>
